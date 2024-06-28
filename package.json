@@ -1,0 +1,15 @@
+{
+  "name": "ecobici-data-report",
+  "version": "1.0.0",
+  "description": "Scripts for processing Ecobici data, generating normalized data and other tools for its exploration",
+  "maintainers": [
+    {
+      "name": "Guillermo Croppi",
+      "url": "https://guillecro.com"
+    }
+  ],
+  "dependencies": {
+    "dayjs": "^1.11.11",
+    "papaparse": "^5.4.1"
+  }
+}

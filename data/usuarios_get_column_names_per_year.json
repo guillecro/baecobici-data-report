@@ -1,0 +1,77 @@
+{
+  "2015": [
+    "id_usuario",
+    "genero_usuario",
+    "edad_usuario",
+    "fecha_alta",
+    "hora_alta"
+  ],
+  "2016": [
+    "id_usuario",
+    "genero_usuario",
+    "edad_usuario",
+    "fecha_alta",
+    "hora_alta"
+  ],
+  "2017": [
+    "id_usuario",
+    "genero_usuario",
+    "edad_usuario",
+    "fecha_alta",
+    "hora_alta"
+  ],
+  "2018": [
+    "id_usuario",
+    "genero_usuario",
+    "edad_usuario",
+    "fecha_alta",
+    "hora_alta"
+  ],
+  "2019": [
+    "ID_usuario",
+    "genero_usuario",
+    "edad_usuario",
+    "fecha_alta",
+    "hora_alta"
+  ],
+  "2020": [
+    "ID_usuario",
+    "genero_usuario",
+    "edad_usuario",
+    "fecha_alta",
+    "hora_alta",
+    "Customer.Has.Dni..Yes...No."
+  ],
+  "2021": [
+    "ID_usuario",
+    "genero_usuario",
+    "edad_usuario",
+    "fecha_alta",
+    "hora_alta",
+    "Customer.Has.Dni..Yes...No."
+  ],
+  "2022": [
+    "ID_usuario",
+    "genero_usuario",
+    "edad_usuario",
+    "fecha_alta",
+    "hora_alta",
+    "Customer.Has.Dni..Yes...No."
+  ],
+  "2023": [
+    "ID_usuario",
+    "genero_usuario",
+    "edad_usuario",
+    "fecha_alta",
+    "hora_alta",
+    "Customer.Has.Dni..Yes...No."
+  ],
+  "2024": [
+    "ID_usuario",
+    "genero_usuario",
+    "edad_usuario",
+    "fecha_alta",
+    "hora_alta",
+    "Customer.Has.Dni..Yes...No."
+  ]
+}
