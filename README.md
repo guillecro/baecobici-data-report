@@ -1,9 +1,14 @@
 
 ![Header](/images/header.png)
 
-# BA Ecobici - Data ETL
 
-[TOC]
+# Exploración y curaduría del dataset de Bicicletas Públicas de la Ciudad de Buenos Aires (2010-2024)
+
+> [!NOTE]
+> Última actualización: 30/06/2024
+
+> [!IMPORTANT]
+> Para visitar el Reporte hecho en Looker Studio, ingrese al siguiente link: [Link al reporte](https://lookerstudio.google.com/s/qr4CUzQqGz4)
 
 El siguiente repositorio es un trabajo de ETL (Extract, Transform, Load) de los datos de Ecobici de la Ciudad de Buenos Aires, que estan disponibles en el portal de Datos Abiertos de la Ciudad de Buenos Aires (BA Data). El trabajo consiste en la extracción de los datos, la transformación de los mismos y la carga en una base de datos MySQL.
 
@@ -839,7 +844,8 @@ Se crearán tres tablas en la base de datos `ecobici`:
 - `users`: Contiene la información de los usuarios de BA Ecobici a lo largo de los años.
 - `trips`: Contiene la información de los recorridos realizados por los usuarios de BA Ecobici a lo largo de los años.
 
-A continuación se presentan las definiciones de las tablas:
+A continuación se presentan las definiciones de las tablas
+
 
 ```sql
 CREATE TABLE "stations" (
@@ -922,4 +928,210 @@ Para eso, se procederá a conectar la base de datos de MySQL con Looker Studio, 
 
 Para conectar la base de datos de MySQL con Looker Studio
 
+![MySQL Driver](/images/looker-mysql-connection.png)
 
+
+
+### Tablas auxiliares
+
+Para mejorar la performance de las consultas, se crearon tablas extras de datos extraidos de `trips` & `stations`.
+
+```sql
+-- Tabla para definir cuantos recorridos hubo desde una estacion X hasta otra estación Y
+CREATE TABLE `trips_stations` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`year_trip` VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`origin_id` VARCHAR(100) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`destination_id` VARCHAR(100) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`trip_stations_count` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `year_trip` (`year_trip`) USING BTREE,
+	INDEX `origin_id` (`origin_id`) USING BTREE,
+	INDEX `destination_id` (`destination_id`) USING BTREE,
+	INDEX `origin_id_destination_id` (`origin_id`, `destination_id`) USING BTREE
+) COLLATE='utf8mb4_general_ci';
+
+-- Query para poblar la tabla "trips_stations"
+INSERT INTO ecobici.trips_stations (year_trip, origin_id, destination_id, trip_stations_count)
+SELECT t.year_trip, t.origin_id, t.destination_id, COUNT(0) AS trip_stations_count
+FROM ecobici.trips t
+GROUP BY t.year_trip, t.origin_id, t.destination_id;
+
+-- Tabla para definir cuantos recorridos hubo por año, donde la estacion de origen es distinta a la estacion de destino
+CREATE TABLE `trips_stations_loops` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`year_trip` VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`origin_id` VARCHAR(100) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`destination_id` VARCHAR(100) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`trip_stations_count` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `year_trip` (`year_trip`) USING BTREE,
+	INDEX `origin_id` (`origin_id`) USING BTREE,
+	INDEX `destination_id` (`destination_id`) USING BTREE,
+	INDEX `origin_id_destination_id` (`origin_id`, `destination_id`) USING BTREE
+) COLLATE='utf8mb4_general_ci';
+
+-- Query para poblar la tabla "trips_stations_loops"
+INSERT INTO ecobici.trips_stations_loops (year_trip, origin_id, destination_id, trip_stations_count)
+SELECT t.year_trip, t.origin_id, t.destination_id, COUNT(0) AS trip_stations_count
+FROM ecobici.trips t
+WHERE t.origin_id = t.destination_id
+GROUP BY t.year_trip, t.origin_id, t.destination_id;
+
+-- Tabla para definir cuantos recorridos hubo por año, donde la estacion de origen es distinta a la estacion de destino
+CREATE TABLE `trips_stations_no_loops` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`year_trip` VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`origin_id` VARCHAR(100) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`destination_id` VARCHAR(100) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`trip_stations_count` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `year_trip` (`year_trip`) USING BTREE,
+	INDEX `origin_id` (`origin_id`) USING BTREE,
+	INDEX `destination_id` (`destination_id`) USING BTREE,
+	INDEX `origin_id_destination_id` (`origin_id`, `destination_id`) USING BTREE
+) COLLATE='utf8mb4_general_ci';
+
+-- Query para poblar la tabla "trips_stations_no_loops"
+INSERT INTO ecobici.trips_stations_no_loops (year_trip, origin_id, destination_id, trip_stations_count)
+SELECT t.year_trip, t.origin_id, t.destination_id, COUNT(0) AS trip_stations_count
+FROM ecobici.trips t
+WHERE t.origin_id <> t.destination_id
+GROUP BY t.year_trip, t.origin_id, t.destination_id;
+```
+
+Las siguientes tablas tambien son para poder hacer metricas de los usuarios y los recorridos (solamente en los periodos 2018-2024)
+
+```sql
+
+CREATE TABLE `trips_top_users` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`year_trip` VARCHAR(10) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`user_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+	`total_trips` BIGINT(19) NOT NULL DEFAULT '0',
+	`age` INT(10) NULL DEFAULT NULL,
+	`genre` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`year_created_at` VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `year_trip` (`year_trip`) USING BTREE,
+	INDEX `user_id` (`user_id`) USING BTREE,
+	INDEX `year_trip_user_id` (`year_trip`, `user_id`) USING BTREE
+) COLLATE='utf8mb4_general_ci';
+
+INSERT INTO ecobici.trips_top_users (year_trip, user_id, total_trips, age, genre, year_created_at)
+SELECT "ranked"."year_trip" AS "year_trip",
+       "ranked"."user_id" AS "user_id",
+       "ranked"."total_trips" AS "total_trips",
+       "ranked"."age" AS "age",
+       "ranked"."genre" AS "genre",
+       "ranked"."year_created_at" AS "year_created_at"
+FROM  (
+  SELECT "t"."year_trip" AS "year_trip",
+          "t"."user_id" AS "user_id",
+          "t"."total_trips" AS "total_trips",
+          row_number() OVER (PARTITION BY "t"."year_trip" ORDER BY "t"."total_trips" DESC) AS "rn",
+          "u"."age" AS "age",
+          "u"."genre" AS "genre",
+          "u"."year_created_at" AS "year_created_at"
+	FROM "ecobici"."trips_by_users_per_year" "t"
+	LEFT JOIN "ecobici"."users" "u" on "t"."user_id" = "u"."user_id"
+) "ranked"
+WHERE ("ranked"."rn" <= 50);
+
+
+CREATE TABLE `trips_top_users_duration` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`year_trip` VARCHAR(10) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`user_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+	`total_trips` BIGINT(19) NOT NULL DEFAULT '0',
+	`age` INT(10) NULL DEFAULT NULL,
+	`genre` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`year_created_at` VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `year_trip` (`year_trip`) USING BTREE,
+	INDEX `user_id` (`user_id`) USING BTREE,
+	INDEX `year_trip_user_id` (`year_trip`, `user_id`) USING BTREE
+) COLLATE='utf8mb4_general_ci';
+
+
+INSERT INTO ecobici.trips_top_users_duration (year_trip, user_id, total_duration, age, genre, year_created_at)
+SELECT "ranked"."year_trip" AS "year_trip",
+       "ranked"."user_id" AS "user_id",
+       "ranked"."total_duration" AS "total_duration",
+       "ranked"."age" AS "age",
+       "ranked"."genre" AS "genre",
+       "ranked"."year_created_at" AS "year_created_at"
+FROM  (
+  SELECT "t"."year_trip" AS "year_trip",
+          "t"."user_id" AS "user_id",
+          "t"."total_duration" AS "total_duration",
+          row_number() OVER (PARTITION BY "t"."year_trip" ORDER BY "t"."total_duration" DESC) AS "rn",
+          "u"."age" AS "age",
+          "u"."genre" AS "genre",
+          "u"."year_created_at" AS "year_created_at"
+	FROM "ecobici"."trips_by_users_per_year" "t"
+	LEFT JOIN "ecobici"."users" "u" on "t"."user_id" = "u"."user_id"
+) "ranked"
+WHERE ("ranked"."rn" <= 50);
+
+
+CREATE TABLE `trips_top_users_duration` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`year_trip` VARCHAR(10) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`user_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+	`total_trips` BIGINT(19) NOT NULL DEFAULT '0',
+	`age` INT(10) NULL DEFAULT NULL,
+	`genre` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`year_created_at` VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `year_trip` (`year_trip`) USING BTREE,
+	INDEX `user_id` (`user_id`) USING BTREE,
+	INDEX `year_trip_user_id` (`year_trip`, `user_id`) USING BTREE
+) COLLATE='utf8mb4_general_ci';
+
+INSERT INTO ecobici.trips_top_users_distance (year_trip, user_id, total_distance, age, genre, year_created_at)
+SELECT "ranked"."year_trip" AS "year_trip",
+       "ranked"."user_id" AS "user_id",
+       "ranked"."total_distance" AS "total_distance",
+       "ranked"."age" AS "age",
+       "ranked"."genre" AS "genre",
+       "ranked"."year_created_at" AS "year_created_at"
+FROM  (
+  SELECT "t"."year_trip" AS "year_trip",
+          "t"."user_id" AS "user_id",
+          "t"."total_distance" AS "total_distance",
+          row_number() OVER (PARTITION BY "t"."year_trip" ORDER BY "t"."total_distance" DESC) AS "rn",
+          "u"."age" AS "age",
+          "u"."genre" AS "genre",
+          "u"."year_created_at" AS "year_created_at"
+	FROM "ecobici"."trips_by_users_per_year" "t"
+	LEFT JOIN "ecobici"."users" "u" on "t"."user_id" = "u"."user_id"
+) "ranked"
+WHERE ("ranked"."rn" <= 50);
+```
+
+### Data Sources (Tablas de MySQL)
+
+![Data Sources usados](/images/looker-data-sources.png)
+
+### Blends realizados
+
+![Blends en Looker Studio](/images/looker-blends.png)
+
+Ejemplo de un blend entre tablas de mysql
+
+![Ejemplo de Blend "trips_stations + stations"](/images/looker-blend-example.png)
+
+### Filters realizados
+
+![Filters](/images/looker-blend-example.png)
+
+### Otros recursos utilizados: Group fields
+
+Por ejemplo, para agrupar edades y mostrarlos en una tabla, se configuro un nuevo campo de la tabla `users` llamado `group_ages` y se realizo con Looker Studio, de la siguiente manera:
+
+![Group Ages Field + MySQL table "user"](/images/group-ages-looker-studio.png)
+
+De esta manera se puede hacer la siguiente visualización:
+
+![Group Ages Chart](/images/looker-group-age-visual.png)
