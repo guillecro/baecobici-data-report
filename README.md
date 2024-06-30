@@ -1018,6 +1018,7 @@ CREATE TABLE `trips_top_users` (
 	INDEX `year_trip_user_id` (`year_trip`, `user_id`) USING BTREE
 ) COLLATE='utf8mb4_general_ci';
 
+-- Query Insert Top 50 usuarios que viajaron mas.
 INSERT INTO ecobici.trips_top_users (year_trip, user_id, total_trips, age, genre, year_created_at)
 SELECT "ranked"."year_trip" AS "year_trip",
        "ranked"."user_id" AS "user_id",
@@ -1038,12 +1039,11 @@ FROM  (
 ) "ranked"
 WHERE ("ranked"."rn" <= 50);
 
-
 CREATE TABLE `trips_top_users_duration` (
 	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`year_trip` VARCHAR(10) NOT NULL COLLATE 'utf8mb4_general_ci',
 	`user_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-	`total_trips` BIGINT(19) NOT NULL DEFAULT '0',
+	`total_duration` BIGINT(19) NOT NULL DEFAULT '0',
 	`age` INT(10) NULL DEFAULT NULL,
 	`genre` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`year_created_at` VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
@@ -1053,7 +1053,7 @@ CREATE TABLE `trips_top_users_duration` (
 	INDEX `year_trip_user_id` (`year_trip`, `user_id`) USING BTREE
 ) COLLATE='utf8mb4_general_ci';
 
-
+-- Query Insert Top 50 usuarios que ocuparon mas tiempo el servicio
 INSERT INTO ecobici.trips_top_users_duration (year_trip, user_id, total_duration, age, genre, year_created_at)
 SELECT "ranked"."year_trip" AS "year_trip",
        "ranked"."user_id" AS "user_id",
@@ -1075,11 +1075,11 @@ FROM  (
 WHERE ("ranked"."rn" <= 50);
 
 
-CREATE TABLE `trips_top_users_duration` (
+CREATE TABLE `trips_top_users_distance` (
 	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`year_trip` VARCHAR(10) NOT NULL COLLATE 'utf8mb4_general_ci',
 	`user_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-	`total_trips` BIGINT(19) NOT NULL DEFAULT '0',
+	`total_distance` DECIMAL(20,6) NOT NULL DEFAULT '0.000000',
 	`age` INT(10) NULL DEFAULT NULL,
 	`genre` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`year_created_at` VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
@@ -1089,6 +1089,7 @@ CREATE TABLE `trips_top_users_duration` (
 	INDEX `year_trip_user_id` (`year_trip`, `user_id`) USING BTREE
 ) COLLATE='utf8mb4_general_ci';
 
+-- Query Insert Top 50 usuarios que hicieron mayor distancia (estaciones distintas)
 INSERT INTO ecobici.trips_top_users_distance (year_trip, user_id, total_distance, age, genre, year_created_at)
 SELECT "ranked"."year_trip" AS "year_trip",
        "ranked"."user_id" AS "user_id",
