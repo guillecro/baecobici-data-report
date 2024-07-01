@@ -1125,7 +1125,7 @@ Ejemplo de un blend entre tablas de mysql
 
 ### Filters realizados
 
-![Filters](/images/looker-blend-example.png)
+![Filters](/images/looker-filters.png)
 
 ### Otros recursos utilizados: Group fields
 
