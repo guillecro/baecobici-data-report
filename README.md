@@ -8,7 +8,7 @@
 > Última actualización: 30/06/2024
 
 > [!IMPORTANT]
-> Para visitar el Reporte hecho en Looker Studio, ingrese al siguiente link: [Link al reporte](https://lookerstudio.google.com/s/qr4CUzQqGz4)
+> Para visitar el Reporte hecho en Looker Studio, ingrese al siguiente link: [Link al reporte](https://lookerstudio.google.com/reporting/d4a454c5-413d-457c-8925-1742b95d79fe/page/p_5p3f45lmid)
 
 El siguiente repositorio es un trabajo de ETL (Extract, Transform, Load) de los datos de Ecobici de la Ciudad de Buenos Aires, que estan disponibles en el portal de Datos Abiertos de la Ciudad de Buenos Aires (BA Data). El trabajo consiste en la extracción de los datos, la transformación de los mismos y la carga en una base de datos MySQL.
 
