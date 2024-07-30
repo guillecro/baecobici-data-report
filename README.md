@@ -1136,3 +1136,25 @@ Por ejemplo, para agrupar edades y mostrarlos en una tabla, se configuro un nuev
 De esta manera se puede hacer la siguiente visualización:
 
 ![Group Ages Chart](/images/looker-group-age-visual.png)
+
+# Reporte - Imagenes
+
+![Tapa](/images/report/00-tapa.png)
+![Consideraciones a saber](/images/report/01-reporte.png)
+![Estaciones populares por Año y extremo del Recorrido](/images/report/02-reporte.png)
+![Estaciones por año de creacion y ubicación](/images/report/03-reporte.png)
+![Recorridos más populares por año](/images/report/04-reporte.png)
+![Recorridos x/ año & acumulados en el tiempo](/images/report/06-reporte.png)
+![Usuarios: Registros, Género e Indicadores (2015-2024)](/images/report/07-reporte.png)
+![Top 50 Usuarios c/ más viajes, distancia y duiracion x/ año - 2024](/images/report/08-reporte2024.png)
+![Top 50 Usuarios c/ más viajes, distancia y duiracion x/ año - 2023](/images/report/08-reporte2023.png)
+![Top 50 Usuarios c/ más viajes, distancia y duiracion x/ año - 2022](/images/report/08-reporte2022.png)
+![Top 50 Usuarios c/ más viajes, distancia y duiracion x/ año - 2021](/images/report/08-reporte2021.png)
+![Top 50 Usuarios c/ más viajes, distancia y duiracion x/ año - 2020](/images/report/08-reporte2020.png)
+![Top 50 Usuarios c/ más viajes, distancia y duiracion x/ año - 2019](/images/report/08-reporte2019.png)
+![Top 50 Usuarios c/ más viajes, distancia y duiracion x/ año - 2018](/images/report/08-reporte2018.png)
+![Métricas de recorridos realizados x/ año y usuario](/images/report/09-reporte.png)
+![Métricas de recorridos realizados x/ año y género 2024-2021](/images/report/10-reporteA.png)
+![Métricas de recorridos realizados x/ año y género 2021-2019](/images/report/10-reporteB.png)
+![Glosario de términos](/images/report/11-reporte.png)
+
